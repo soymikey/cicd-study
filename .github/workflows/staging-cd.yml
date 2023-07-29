@@ -44,6 +44,6 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           TARGET: '/home/ubuntu/docker_volume/nginxproxymanager/html/cicd-staging'
   E2E-Test:
-    uses: ./.github/workflows/e2e-test.yml
+    uses: ./.github/workflows/e2e-test-staging.yml
     needs: [Staging-CD]
     secrets: inherit
