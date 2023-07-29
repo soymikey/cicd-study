@@ -62,7 +62,7 @@ jobs:
           SOURCE: 'dist/'
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: '/data/www'
+          TARGET: '/home/ubuntu/server'
   E2E-Test:
     uses: ./.github/workflows/e2e-test.yml
     needs: [CD]
