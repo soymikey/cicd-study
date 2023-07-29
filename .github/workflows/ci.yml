@@ -1,7 +1,7 @@
 name: CI
 on:
   pull_request:
-    branches: main
+    branches: [main, staging]
 jobs:
   CI:
     runs-on: ubuntu-latest

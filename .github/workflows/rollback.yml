@@ -37,7 +37,7 @@ jobs:
           SOURCE: 'dist/'
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
-          TARGET: '/home/ubuntu/docker_volume/nginxproxymanager/html'
+          TARGET: ${{  github.ref== 'refs/heads/main'&&'/home/ubuntu/docker_volume/nginxproxymanager/html/cicd'||'/home/ubuntu/docker_volume/nginxproxymanager/html/cicd.staging'}}
   E2E-Test:
     uses: ./.github/workflows/e2e-test.yml
     needs: [Rollback]
