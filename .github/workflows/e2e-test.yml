@@ -23,4 +23,4 @@ jobs:
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: yarn install
       - name: Running E2E Test
-        run: yarn test:e2e --URL=http://github.migaox.com/
+        run: yarn test:e2e --URL=http://github.migaox.co/
