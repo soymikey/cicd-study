@@ -2,7 +2,7 @@ const DEFAULT_URL = 'http://localhost:3000/';
 
 describe('Check Page', () => {
   beforeAll(async () => {
-    let dynamicUrl = '';
+    let dynamicUrl = 'http://github.migaox.com/';
     process.argv.forEach((item) => {
       const matches = item.match(/^\-\-URL\=(.*)$/);
       if (matches) {
