@@ -22,6 +22,7 @@ const App: FC<Props> = ({ value }) => {
         <p>feature-v.4.0.0</p>
         <p>feature-v.7.0.0</p>
         <p>feature-v.8.0.0</p>
+        <p>feature-v.9.0.0</p>
         <p>
           <button role="button" type="button" onClick={() => setCount((v) => v + 1)}>
             count is: {count}
