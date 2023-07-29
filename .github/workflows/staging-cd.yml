@@ -1,9 +1,9 @@
-name: CD
+name: Staging-CD
 on:
   push:
-    branches: main
+    branches: staging
 jobs:
-  CD:
+  Staging-CD:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -34,26 +34,6 @@ jobs:
         run: |
           yarn build
           zip -r assets ./dist/**
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
-        with:
-          tag_name: v${{steps.version.outputs.value}}
-          release_name: v${{steps.version.outputs.value}}
-          draft: false
-          prerelease: false
-      - name: Update Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./assets.zip
-          asset_name: assets.zip
-          asset_content_type: application/zip
       - name: Upload to Deploy Server
         uses: easingthemes/ssh-deploy@v2.0.7
         env:
@@ -62,8 +42,8 @@ jobs:
           SOURCE: 'dist/'
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: '/home/ubuntu/docker_volume/nginxproxymanager/html/cicd'
+          TARGET: '/home/ubuntu/docker_volume/nginxproxymanager/html/cicd-staging'
   E2E-Test:
     uses: ./.github/workflows/e2e-test.yml
-    needs: [CD]
+    needs: [Staging-CD]
     secrets: inherit
