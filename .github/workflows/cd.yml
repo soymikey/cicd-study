@@ -1,0 +1,70 @@
+name: CD
+on:
+  push:
+    branches: [main, staging]
+jobs:
+  CD:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Cache
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            **/node_modules
+          key: ${{runner.OS}}-${{hashFiles('**/yarn.lock')}}
+      - name: Installing Dependencies
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: yarn install
+      - name: Read Version (Main Branch Only)
+        if: startsWith(github.ref, 'refs/heads/main')
+        id: version
+        uses: ashley-taylor/read-json-property-action@v1.0
+        with:
+          path: ./package.json
+          property: version
+      - name: Building
+        run: |
+          yarn build
+          zip -r assets ./dist/**
+      - name: Create GitHub Release (Main Branch Only)
+        if: startsWith(github.ref, 'refs/heads/main')
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
+        with:
+          tag_name: v${{steps.version.outputs.value}}
+          release_name: v${{steps.version.outputs.value}}
+          draft: false
+          prerelease: false
+      - name: Update Release Asset (Main Branch Only)
+        if: startsWith(github.ref, 'refs/heads/main')
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROJECT_ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./assets.zip
+          asset_name: assets.zip
+          asset_content_type: application/zip
+      - name: Upload to Deploy Server
+        uses: easingthemes/ssh-deploy@v2.0.7
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN }}
+          ARGS: '-avzr --delete'
+          SOURCE: 'dist/'
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{  github.ref== 'refs/heads/main'&&'/home/ubuntu/docker_volume/nginxproxymanager/html/cicd'||'/home/ubuntu/docker_volume/nginxproxymanager/html/cicd-staging'}}
+  E2E-Test:
+    uses: ./.github/workflows/e2e-test.yml
+    needs: [CD]
+    secrets: inherit
