@@ -6,14 +6,12 @@ jobs:
   CD:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          # vite 需要在node>=12 的环境下执行
-          # puppeteer 需要在node>=14.1.0 的环境下执行
           node-version: '16.x'
+      - name: Checkout repository
+        uses: actions/checkout@v2
       - name: Cache
         id: cache-dependencies
         uses: actions/cache@v3
