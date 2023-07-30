@@ -6,7 +6,7 @@ on:
         description: 'choose a version to deploy'
         required: true
       E2ETest:
-        description: 'enable torun e2e test'
+        description: 'enable to run e2e test'
         default: true
         type: boolean
 jobs:
